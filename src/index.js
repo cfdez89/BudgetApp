@@ -38,24 +38,29 @@ var indexCtl = (function() {
     };
 
 
-    var calculateTotal = function(){
-
+    var calculateTotal = function(type){
+        var sum = 0;
+        data.allItems[type].forEach(function(current){
+            sum += current.value;
+        });
+        data.totals[type] = sum;
     };
 
-    var createItemId = function(type){
-        return data.allItems[type][data.allItems[type].length-1].id+1;
+    var newItemId = function(type){
+        var lastItemIndex = data.allItems[type].length-1;
+        return data.allItems[type][lastItemIndex].id+1;
     };
 
     function addItem(type, description , value){ 
         var newItem = null;
-        var newId;
+        var newId = -1;
 
         if(type === itemTypes.EXP){
-            newId = createItemId(type);
+            newId = newItemId(type);
             newItem = new Expense(newId, description, value);
         }
         else if(type === itemTypes.INC){
-            newId = createItemId(type);
+            newId = newItemId(type);
             newItem = new Income(newId, description, value);
         }
 
