@@ -14,7 +14,7 @@ var indexCtl = (function() {
         this.id = id;
         this.description = description;
         this.value = value;
-        this.precentage = -1;
+        this.percentage = -1;
     };
 
     var Income = function(id, description, value){
