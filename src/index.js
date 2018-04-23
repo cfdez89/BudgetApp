@@ -17,6 +17,19 @@ var indexCtl = (function() {
         this.percentage = -1;
     };
 
+    Expense.prototype.calcPercentage = function(totalIncome){
+        if(totalIncome > 0){
+            this.percentage = Math.round((this.value/totalIncome)*100);
+        }
+        else {
+            this.percentage = -1;
+        }
+    };
+
+    Expense.prototype.getPercentage = function(){
+        return this.percentage;
+    };
+
     var Income = function(id, description, value){
         this.id = id;
         this.description = description;
@@ -82,14 +95,28 @@ var indexCtl = (function() {
     }
 
     function calculateBudget(){
+        calculateTotal(itemTypes.exp);
+        calculateTotal(itemTypes.inc);
+
+        data.budget = data.totals.inc - data.totals.exp;
+        if(data.totals.inc > 0){
+            data.percentage = Math.round((data.totals.exp / data.totals.inc) * 100);
+        }
+        else {
+            data.percentage = -1;
+        }
     }
 
     function calculatePercentages(){
-
+        data.allItems.exp.forEach(function(exp){
+            exp.getPercentage(data.totals.inc);
+        });
     }
 
     function getPercentages(){
-
+        var allPercentage = data.allItems.exp.map(function(exp){
+            return exp.getPercentage();
+        });
     }
 
     function getBudget(){
