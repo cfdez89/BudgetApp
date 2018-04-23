@@ -109,7 +109,7 @@ var indexCtl = (function() {
 
     function calculatePercentages(){
         data.allItems.exp.forEach(function(exp){
-            exp.getPercentage(data.totals.inc);
+            exp.calcPercentage(data.totals.inc);
         });
     }
 
