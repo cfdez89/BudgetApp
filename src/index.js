@@ -117,6 +117,7 @@ var indexCtl = (function() {
         var allPercentage = data.allItems.exp.map(function(exp){
             return exp.getPercentage();
         });
+        return allPercentage;
     }
 
     function getBudget(){
