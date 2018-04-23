@@ -161,8 +161,17 @@ var uiCtl = (function() {
         return DOMStrings;
     }
 
+    function getInput(){
+        return {
+            type: document.querySelector(DOMStrings.inputType).value,
+            description: document.querySelector(DOMStrings.inputDescription).value,
+            value: document.querySelector(DOMStrings.inputValue).value
+        };
+    }
+
     return {
-        getDOMStrings: getDOMStrings
+        getDOMStrings: getDOMStrings,
+        getInput: getInput
     };
 
 })();
