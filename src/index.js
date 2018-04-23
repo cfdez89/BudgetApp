@@ -2,7 +2,7 @@ import _ from 'lodash';
 import './styles/style.css';
 
 //revealing module pattern
-var indexCtl = (function() {
+var IndexCtl = (function() {
     //constants
     var itemTypes = {
         INC: 'inc',
@@ -139,7 +139,7 @@ var indexCtl = (function() {
     }
 })();
 
-var uiCtl = (function() {
+var UICtl = (function() {
 
     var DOMStrings = {
         inputType: '.add__type',
@@ -176,9 +176,9 @@ var uiCtl = (function() {
 
 })();
 
-var appCtl = (function(_indexCtl, _uiCtl) {
+var AppCtl = (function(_IndexCtl, _UICtl) {
 
-    var DOM = _uiCtl.getDOMStrings();
+    var DOM = _UICtl.getDOMStrings();
 
     document.querySelector(DOM.inputBtn).onclick = ctlAddItem;
     document.onkeypress = function(event) {
@@ -200,4 +200,6 @@ var appCtl = (function(_indexCtl, _uiCtl) {
         init: init
     };
 
-})(indexCtl, uiCtl);
+})(IndexCtl, UICtl);
+
+AppCtl.init();
