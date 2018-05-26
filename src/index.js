@@ -1,13 +1,15 @@
 import _ from 'lodash';
 import './styles/style.css';
+//constants
+var itemTypes = {
+    INC: 'inc',
+    EXP: 'exp'
+};
 
 //revealing module pattern
 var IndexCtl = (function() {
     //constants
-    var itemTypes = {
-        INC: 'inc',
-        EXP: 'exp'
-    };
+    
 
     //function constructor's
     var Expense =  function(id, description, value){
@@ -168,10 +170,55 @@ var UICtl = (function() {
             value: document.querySelector(DOMStrings.inputValue).value
         };
     }
+    //formats a number using fixed-point notation
+    //input 23510, output 23,510
+    function formatNumber(num, type){
+        num = Math.abs(num);
+        num = num.toFixed(2);
+        var numSplit = num.split('.');
+        var int = numSplit[0];
+        var dec = numSplit[1];
+
+        if(int.length > 3) {
+            int = int.substr(0, int.length - 3) + ',' + int.substr(int.length - 3, 3);
+        }
+    }
+
+    function changedType(){
+
+    }
+
+    function displayMonth(){
+        var months = ['January', 'February', 'March', 'April', 'May', 'June', 
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+        var now = new Date();
+        var month = now.getMonth();
+        var year = now.getFullYear();
+        document.querySelector(DOMStrings.dateLabel).textContent = months[month] + ' ' + year;
+    }
+
+    function displayBudget(data){
+        var type;
+        data.budget > 0 ? type = itemTypes.INC :type = itemTypes.EXP;
+                   
+        document.querySelector(DOMStrings.budgetLabel).textContent = formatNumber(data.budget, type);
+        document.querySelector(DOMStrings.incomeLabel).textContent = formatNumber(data.totalInc, itemTypes.INC);
+        document.querySelector(DOMStrings.expensesLabel).textContent = formatNumber(data.totalExp, itemTypes.EXP);
+
+        if(data.percentage > 0){
+            document.querySelector(DOMStrings.percentageLabel).textContent = data.percentage + '%';
+        }
+        else{
+            document.querySelector(DOMStrings.percentageLabel).textContent = '---';
+        }
+    }
 
     return {
         getDOMStrings: getDOMStrings,
-        getInput: getInput
+        getInput: getInput,
+        displayMonth: displayMonth,
+        displayBudget: displayBudget
     };
 
 })();
@@ -182,18 +229,31 @@ var AppCtl = (function(_IndexCtl, _UICtl) {
 
     document.querySelector(DOM.inputBtn).onclick = ctlAddItem;
     document.onkeypress = function(event) {
-        if (event.keyCode === 13 || event.which === 13) {
+        if(event.keyCode === 13 || event.which === 13) {
             ctlAddItem();
         }
     };
-
+    document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);    
+    document.querySelector(DOM.inputType).addEventListener('change', _UICtl.changedType);   
     function ctlAddItem() {
         console.log('hola');
         //if(){
 
         //}
     }
+
+    function ctrlDeleteItem(){
+
+    }
     function init() {
+        var defaultValues = {
+            budget: 0,
+            totalInc: 0,
+            totalExp: 0,
+            percentage: -1
+        };
+        _UICtl.displayMonth();
+        _UICtl.displayBudget(defaultValues);
     }
 
     return {
