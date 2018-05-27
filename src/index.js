@@ -188,6 +188,12 @@ var UICtl = (function() {
         fieldsArray[0].focus();
     }
 
+    var nodeListForEach = function(list, callback) {
+        for (var i = 0; i < list.length; i++) {
+            callback(list[i], i);
+        }
+    };
+
     function addListItem(obj, type){
         var element;
         var html;
@@ -222,7 +228,7 @@ var UICtl = (function() {
                                 '%value%'+
                             '</div>'+
                             '<div class="item__percentage">'+
-                                '21%'+
+                                '00%'+
                             '</div>'+
                             '<div class="item__delete">'+
                                 '<button class="item__delete--btn">'+
@@ -293,13 +299,25 @@ var UICtl = (function() {
         }
     }
 
+    function displayPercentages(percentages){
+        var fields = document.querySelectorAll(DOMStrings.expensesPercLabel);
+        nodeListForEach(fields, function(current, index){      
+            if (percentages[index] > 0) {
+                current.textContent = percentages[index] + '%';
+            } else {
+                current.textContent = '---';
+            }
+        });
+    }
+
     return {
         getDOMStrings: getDOMStrings,
         getInput: getInput,
         clearFields: clearFields,
         addListItem: addListItem,
         displayMonth: displayMonth,
-        displayBudget: displayBudget
+        displayBudget: displayBudget,
+        displayPercentages: displayPercentages
     };
 
 })();
@@ -323,6 +341,12 @@ var AppCtl = (function(_IndexCtl, _UICtl) {
         _UICtl.displayBudget(budget);
     }
 
+    function updatePercentages(){
+        _IndexCtl.calculatePercentages();
+        var percentages = _IndexCtl.getPercentages();
+        _UICtl.displayPercentages(percentages);
+    }
+
     function ctlAddItem() {
         var newItem;
         var input = _UICtl.getInput();
@@ -331,6 +355,7 @@ var AppCtl = (function(_IndexCtl, _UICtl) {
             _UICtl.addListItem(newItem, input.type);
             _UICtl.clearFields();
             updateBudget();
+            updatePercentages();
         }
     }
 
