@@ -1,5 +1,7 @@
 import _ from 'lodash';
 import './styles/style.css';
+//npm run start
+
 //constants
 var itemTypes = {
     INC: 'inc',
@@ -62,8 +64,14 @@ var IndexCtl = (function() {
     };
 
     var newItemId = function(type){
-        var lastItemIndex = data.allItems[type].length-1;
-        return data.allItems[type][lastItemIndex].id+1;
+        var lastItemIndex;
+        if(data.allItems[type].length > 0){
+            lastItemIndex = data.allItems[type].length-1;
+            return data.allItems[type][lastItemIndex].id+1;
+        }
+        else {
+            return 0;
+        }
     };
 
     function addItem(type, description , value){ 
@@ -170,6 +178,62 @@ var UICtl = (function() {
             value: document.querySelector(DOMStrings.inputValue).value
         };
     }
+
+    function addListItem(obj, type){
+        var element;
+        var html;
+        var newHtml;
+
+        if(type === itemTypes.INC){
+            element = DOMStrings.incomeContainer;
+            html = '<div class="item clearfix" id="inc-%id%">'+
+                        '<div class="item__description">'
+                            '%description%'+
+                        '</div>'+
+                        '<div class="right clearfix">'+
+                        '<div class="item__value">'+
+                            '%value%'+
+                        '</div>'+
+                        '<div class="item__delete">'+
+                            '<button class="item__delete--btn">'+
+                                '<i class="ion-ios-close-outline"></i>'+
+                            '</button>'+
+                        '</div>'+
+                        '</div>'+
+                    '</div>';
+        }
+        else if(type === itemTypes.EXP){
+            element = DOMStrings.expensesContainer;
+            html =  '<div class="item clearfix" id="exp-%id%">'+
+                        '<div class="item__description">'+
+                            '%description%'+
+                        '</div>'+
+                        '<div class="right clearfix">'+
+                            '<div class="item__value">'+
+                                '%value%'+
+                            '</div>'+
+                            '<div class="item__percentage">'+
+                                '21%'+
+                            '</div>'+
+                            '<div class="item__delete">'+
+                                '<button class="item__delete--btn">'+
+                                    '<i class="ion-ios-close-outline"></i>'+
+                                '</button>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>';
+        }
+        // Replace the placeholder text with some actual data
+        newHtml = html.replace('%id%', obj.id);
+        newHtml = newHtml.replace('%description%', obj.description);
+        console.log(obj.value);
+        console.log(type);
+        console.log(formatNumber(obj.value, type));
+        newHtml = newHtml.replace('%value%', formatNumber(obj.value, type));
+        console.log(newHtml);
+        // Insert the HTML into the DOM
+        document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
+    }
     //formats a number using fixed-point notation
     //input 23510, output 23,510
     function formatNumber(num, type){
@@ -182,6 +246,9 @@ var UICtl = (function() {
         if(int.length > 3) {
             int = int.substr(0, int.length - 3) + ',' + int.substr(int.length - 3, 3);
         }
+        dec = numSplit[1];
+
+        return (type === 'exp' ? '-' : '+') + ' ' + int + '.' + dec;
     }
 
     function changedType(){
@@ -217,6 +284,7 @@ var UICtl = (function() {
     return {
         getDOMStrings: getDOMStrings,
         getInput: getInput,
+        addListItem: addListItem,
         displayMonth: displayMonth,
         displayBudget: displayBudget
     };
@@ -233,18 +301,21 @@ var AppCtl = (function(_IndexCtl, _UICtl) {
             ctlAddItem();
         }
     };
-    document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);    
+    document.querySelector(DOM.container).addEventListener('click', ctlDeleteItem);    
     document.querySelector(DOM.inputType).addEventListener('change', _UICtl.changedType);   
     function ctlAddItem() {
-        console.log('hola');
-        //if(){
-
-        //}
+        var newItem;
+        var input = _UICtl.getInput();
+        if(input.description !== "" && !isNaN(input.value) && input.value > 0){
+            newItem = _IndexCtl.addItem(input.type, input.description, input.value);
+            _UICtl.addListItem(newItem, input.type);
+        }
     }
 
-    function ctrlDeleteItem(){
+    function ctlDeleteItem(){
 
     }
+    
     function init() {
         var defaultValues = {
             budget: 0,
