@@ -105,8 +105,8 @@ var IndexCtl = (function() {
     }
 
     function calculateBudget(){
-        calculateTotal(itemTypes.exp);
-        calculateTotal(itemTypes.inc);
+        calculateTotal(itemTypes.EXP);
+        calculateTotal(itemTypes.INC);
 
         data.budget = data.totals.inc - data.totals.exp;
         if(data.totals.inc > 0){
@@ -179,6 +179,15 @@ var UICtl = (function() {
         };
     }
 
+    function clearFields(){
+        var fields = document.querySelectorAll(DOMStrings.inputDescription+','+DOMStrings.inputValue);
+        var fieldsArray = Array.prototype.slice.call(fields);
+        fieldsArray.forEach(function(current, index, array){
+            current.value = "";
+        });
+        fieldsArray[0].focus();
+    }
+
     function addListItem(obj, type){
         var element;
         var html;
@@ -187,18 +196,18 @@ var UICtl = (function() {
         if(type === itemTypes.INC){
             element = DOMStrings.incomeContainer;
             html = '<div class="item clearfix" id="inc-%id%">'+
-                        '<div class="item__description">'
+                        '<div class="item__description">'+
                             '%description%'+
                         '</div>'+
                         '<div class="right clearfix">'+
-                        '<div class="item__value">'+
-                            '%value%'+
-                        '</div>'+
-                        '<div class="item__delete">'+
-                            '<button class="item__delete--btn">'+
-                                '<i class="ion-ios-close-outline"></i>'+
-                            '</button>'+
-                        '</div>'+
+                            '<div class="item__value">'+
+                                '%value%'+
+                            '</div>'+
+                            '<div class="item__delete">'+
+                                '<button class="item__delete--btn">'+
+                                    '<i class="ion-ios-close-outline"></i>'+
+                                '</button>'+
+                            '</div>'+
                         '</div>'+
                     '</div>';
         }
@@ -226,11 +235,8 @@ var UICtl = (function() {
         // Replace the placeholder text with some actual data
         newHtml = html.replace('%id%', obj.id);
         newHtml = newHtml.replace('%description%', obj.description);
-        console.log(obj.value);
-        console.log(type);
-        console.log(formatNumber(obj.value, type));
         newHtml = newHtml.replace('%value%', formatNumber(obj.value, type));
-        console.log(newHtml);
+       
         // Insert the HTML into the DOM
         document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
     }
@@ -290,6 +296,7 @@ var UICtl = (function() {
     return {
         getDOMStrings: getDOMStrings,
         getInput: getInput,
+        clearFields: clearFields,
         addListItem: addListItem,
         displayMonth: displayMonth,
         displayBudget: displayBudget
@@ -309,12 +316,21 @@ var AppCtl = (function(_IndexCtl, _UICtl) {
     };
     document.querySelector(DOM.container).addEventListener('click', ctlDeleteItem);    
     document.querySelector(DOM.inputType).addEventListener('change', _UICtl.changedType);   
+    
+    function updateBudget(){
+        _IndexCtl.calculateBudget();
+        var budget = _IndexCtl.getBudget();
+        _UICtl.displayBudget(budget);
+    }
+
     function ctlAddItem() {
         var newItem;
         var input = _UICtl.getInput();
         if(input.description !== "" && !isNaN(input.value) && input.value > 0){
             newItem = _IndexCtl.addItem(input.type, input.description, input.value);
             _UICtl.addListItem(newItem, input.type);
+            _UICtl.clearFields();
+            updateBudget();
         }
     }
 
