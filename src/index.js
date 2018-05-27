@@ -237,18 +237,24 @@ var UICtl = (function() {
     //formats a number using fixed-point notation
     //input 23510, output 23,510
     function formatNumber(num, type){
+        var numSplit;
+        var int;
+        var dec;
+        var sign;
+        var formatResult;
+
         num = Math.abs(num);
         num = num.toFixed(2);
-        var numSplit = num.split('.');
-        var int = numSplit[0];
-        var dec = numSplit[1];
+        numSplit = num.split('.');
+        int = numSplit[0];
+        dec = numSplit[1];
 
         if(int.length > 3) {
             int = int.substr(0, int.length - 3) + ',' + int.substr(int.length - 3, 3);
         }
-        dec = numSplit[1];
-
-        return (type === 'exp' ? '-' : '+') + ' ' + int + '.' + dec;
+        sign = type === itemTypes.EXP ? '-' : '+';
+        formatResult = sign+' ' + int + '.' + dec;
+        return formatResult;
     }
 
     function changedType(){
