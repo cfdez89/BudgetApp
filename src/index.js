@@ -246,6 +246,11 @@ var UICtl = (function() {
         // Insert the HTML into the DOM
         document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
     }
+
+    function deleteListItem(selectorId){
+        var el = document.getElementById(selectorId);
+        el.parentNode.removeChild(el);
+    }
     //formats a number using fixed-point notation
     //input 23510, output 23,510
     function formatNumber(num, type){
@@ -360,6 +365,22 @@ var AppCtl = (function(_IndexCtl, _UICtl) {
     }
 
     function ctlDeleteItem(){
+        var itemId = event.target.parentNode.parentNode.parentNode.parentNode.id;
+        var splitId;
+        var type;
+        var Id;
+
+        if (itemId) {
+            
+            //inc-1
+            splitId = itemId.split('-');
+            type = splitId[0];
+            Id = parseInt(splitId[1]);
+            _IndexCtl.deleteItem(type, Id);
+            _UICtl.deleteListItem(itemId);
+            updateBudget();
+            updatePercentages();
+        }
 
     }
     
