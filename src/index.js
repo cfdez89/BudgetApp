@@ -61,6 +61,7 @@ var IndexCtl = (function() {
             sum += current.value;
         });
         data.totals[type] = sum;
+        console.log(data.totals[type]);
     };
 
     var newItemId = function(type){
@@ -272,10 +273,6 @@ var UICtl = (function() {
         sign = type === itemTypes.EXP ? '-' : '+';
         formatResult = sign+' ' + int + '.' + dec;
         return formatResult;
-    }
-
-    function changedType(){
-
     }
 
     function displayMonth(){
